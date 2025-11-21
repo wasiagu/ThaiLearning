@@ -1,13 +1,11 @@
 let DATA = {};
 
-// 這裡放你公開的 CSV URL
 const CSV_URLS = {
-  Consonants: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSVeJINzJ9PNHuNJymHEle_ClecAuSKYdU5UgjovGsjuWDRMtIA5QQpmq59nZwKRDeqJlN_ACxyq3Mz/pub?gid=0&single=true&output=csv',
-  Vowels:     'https://docs.google.com/spreadsheets/d/e/2PACX-1vSVeJINzJ9PNHuNJymHEle_ClecAuSKYdU5UgjovGsjuWDRMtIA5QQpmq59nZwKRDeqJlN_ACxyq3Mz/pub?gid=1209877284&single=true&output=csv',
-  Numbers:    'https://docs.google.com/spreadsheets/d/e/2PACX-1vSVeJINzJ9PNHuNJymHEle_ClecAuSKYdU5UgjovGsjuWDRMtIA5QQpmq59nZwKRDeqJlN_ACxyq3Mz/pub?gid=1402488737&single=true&output=csv'
+  Consonants: '你的 Consonants CSV URL',
+  Vowels:     '你的 Vowels CSV URL',
+  Numbers:    '你的 Numbers CSV URL'
 };
 
-// 把 CSV 轉成 JSON
 async function loadCSV(url) {
   const res = await fetch(url);
   const text = await res.text();
@@ -20,7 +18,6 @@ async function loadCSV(url) {
   });
 }
 
-// 先載入所有 CSV
 async function loadData() {
   for (const key in CSV_URLS) {
     DATA[key] = await loadCSV(CSV_URLS[key]);
@@ -37,26 +34,27 @@ function loadPage(sheetName) {
   let html = `<h2>${sheetName}</h2><div class="grid">`;
 
   DATA[sheetName].forEach(item => {
-    html += `<div class='card' onclick="play('${item.字母 || item.母音}')">`;
+    html += `<div class='card'>`;
 
-    if (item.字母) { // 子音或數字
+    if (item.字母) {
       html += `<h3>${item.字母}</h3>`;
       html += `<p>${item.種類 || ''}</p>`;
       html += `<p>${item.代表單字 || ''} / ${item.音標 || ''} / ${item.意思 || ''}</p>`;
-    } else if (item.母音) { // 母音
+      html += `<button class="speaker" onclick="play('${item.字母}')">🔊</button>`;
+    } else if (item.母音) {
       html += `<h3>${item.母音}</h3>`;
       html += `<p>${item['長/短'] || ''}</p>`;
       html += `<p>${item.音標 || ''}</p>`;
+      html += `<button class="speaker" onclick="play('${item.母音}')">🔊</button>`;
     }
 
     html += `</div>`;
   });
 
-  html += '</div>';
+  html += `</div>`;
   app.innerHTML = html;
 }
 
-// Web Speech API 發音
 function play(text) {
   if (!text) return;
   const utter = new SpeechSynthesisUtterance(text);
@@ -64,5 +62,4 @@ function play(text) {
   speechSynthesis.speak(utter);
 }
 
-// 先載入資料
 loadData();
