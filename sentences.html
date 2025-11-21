@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>例句示範</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Sarabun&family=Kanit&display=swap" rel="stylesheet">
+
+<style>
+    body {
+        margin: 0;
+        font-family: 'Sarabun', sans-serif;
+        background: #fafafa;
+        padding: 20px;
+    }
+
+    h1 {
+        margin-bottom: 15px;
+        font-size: 26px;
+        font-weight: 600;
+    }
+
+    .top-bar {
+        display: flex;
+        gap: 10px;
+        align-items: center;
+        margin-bottom: 20px;
+        flex-wrap: wrap;
+    }
+
+    select {
+        padding: 8px 12px;
+        border-radius: 8px;
+        border: 1px solid #ccc;
+        font-size: 16px;
+    }
+
+    .font-btn {
+        padding: 8px 14px;
+        border-radius: 8px;
+        border: none;
+        cursor: pointer;
+        background: #ddd;
+        font-size: 15px;
+    }
+
+    .font-btn.active {
+        background: #4a90e2;
+        color: white;
+    }
+
+    .grid {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 18px;
+    }
+
+    @media (min-width: 768px) {
+        .grid {
+            grid-template-columns: repeat(2, 1fr);
+        }
+    }
+
+    .card {
+        background: white;
+        border-radius: 12px;
+        padding: 15px;
+        box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+        width: 100%;
+        max-width: 500px;
+        margin: auto;
+        display: flex;
+        flex-direction: column;
+        gap: 5px;
+    }
+
+    .header-row {
+        font-size: 14px;
+        color: #666;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        white-space: nowrap;
+    }
+
+    .sentence {
+        font-size: 30px;  /* 初始字體 30px */
+        white-space: nowrap;
+        overflow: visible;
+    }
+
+    .mean {
+        font-size: 25px;  /* 初始比 sentence 小 5px */
+        color: #444;
+    }
+
+    .icon {
+        cursor: pointer;
+        font-size: 20px;
+    }
+</style>
+</head>
+<body>
+
+<h1>例句示範</h1>
+
+<div class="top-bar">
+    <select id="lessonFilter">
+        <option value="all">全部課程</option>
+    </select>
+
+    <button class="font-btn active" id="fontSarabun">標準</button>
+    <button class="font-btn" id="fontKanit">粗體</button>
+</div>
+
+<div id="cardContainer" class="grid"></div>
+
+<script>
+const SHEET_URL =
+ "https://docs.google.com/spreadsheets/d/e/2PACX-1vQT22bpMZemxklSq6isHxOOijiQ7ma5e_-etlFwgmnVe0g8qAE1R1hycUSTfeqbft3Q2INACVnHrBwr/pub?gid=0&single=true&output=csv";
+
+let allData = [];
+
+/* 自動縮小 sentence 字體，只對超長文字縮小 */
+function fitText(sentenceEl, maxWidth) {
+    let fontSize = 30; // 初始字體
+    sentenceEl.style.fontSize = fontSize + "px";
+
+    const meanEl = sentenceEl.nextElementSibling; // mean 元素
+    if (meanEl) {
+        meanEl.style.fontSize = (fontSize - 5) + "px"; // mean 字體比 sentence 小 5px
+    }
+
+    // 只有超過 maxWidth 才縮小
+    while (sentenceEl.scrollWidth > maxWidth && fontSize > 24) {
+        fontSize--;
+        sentenceEl.style.fontSize = fontSize + "px";
+        if (meanEl) meanEl.style.fontSize = (fontSize - 5) + "px";
+    }
+}
+
+/* 讀取 CSV */
+async function loadCSV() {
+    const res = await fetch(SHEET_URL);
+    const text = await res.text();
+    const rows = text.split("\n").map(r => r.split(","));
+
+    const headers = rows.shift();
+    const data = rows.map(row => {
+        let obj = {};
+        row.forEach((val, idx) => obj[headers[idx].trim()] = val.trim());
+        return obj;
+    });
+
+    allData = data;
+    populateFilter();
+    renderCards("all");
+}
+
+/* 填入 lesson 選項 */
+function populateFilter() {
+    const lessons = [...new Set(allData.map(i => i.lesson))];
+    const filter = document.getElementById("lessonFilter");
+
+    lessons.forEach(l => {
+        const op = document.createElement("option");
+        op.value = l;
+        op.textContent = "Lesson " + l;
+        filter.appendChild(op);
+    });
+}
+
+/* 顯示卡片 */
+function renderCards(lesson) {
+    const container = document.getElementById("cardContainer");
+    container.innerHTML = "";
+
+    const filtered = lesson === "all"
+        ? allData
+        : allData.filter(i => i.lesson === lesson);
+
+    filtered.forEach(item => {
+        const card = document.createElement("div");
+        card.className = "card";
+
+        card.innerHTML = `
+            <div class="header-row">
+                <span>${item.lesson} - ${item.number}</span>
+                <span class="icon" onclick="playSound('${item.audioUrl}')">🔊</span>
+            </div>
+            <div class="sentence">${item.sentence}</div>
+            <div class="mean">${item.mean}</div>
+        `;
+
+        container.appendChild(card);
+
+        const sentenceEl = card.querySelector(".sentence");
+        fitText(sentenceEl, 500); // 卡片最大寬度 500px
+    });
+}
+
+/* 播放音檔 */
+function playSound(url) {
+    const audio = new Audio(url);
+    audio.play();
+}
+
+/* 字型切換 */
+document.getElementById("fontSarabun").onclick = () => {
+    document.body.style.fontFamily = "'Sarabun', sans-serif";
+    document.getElementById("fontSarabun").classList.add("active");
+    document.getElementById("fontKanit").classList.remove("active");
+};
+
+document.getElementById("fontKanit").onclick = () => {
+    document.body.style.fontFamily = "'Kanit', sans-serif";
+    document.getElementById("fontKanit").classList.add("active");
+    document.getElementById("fontSarabun").classList.remove("active");
+};
+
+/* 篩選器 */
+document.getElementById("lessonFilter").addEventListener("change", (e) => {
+    renderCards(e.target.value);
+});
+
+/* 初始化 */
+loadCSV();
+</script>
+
+</body>
+</html>
