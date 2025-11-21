@@ -32,6 +32,7 @@ Papa.parse(csvURL, {
     data.forEach(item => {
       if(!item['number']) return; // 避免空白行
 
+      // 建立字卡
       const card = document.createElement("div");
       card.className = "card";
       card.innerHTML = `
@@ -42,11 +43,18 @@ Papa.parse(csvURL, {
       `;
       container.appendChild(card);
 
+      // 點擊播放音訊
       const btn = card.querySelector(".speak-btn");
       btn.addEventListener("click", () => {
         if(item['audioUrl']){
-          const audio = new Audio(item['audioUrl']);
-          audio.play();
+          // 建立 audio 元素，確保 type 為 audio/mp4
+          const audio = new Audio();
+          audio.src = item['audioUrl'];
+          audio.type = "audio/mp4"; 
+          audio.play().catch(err => {
+            alert("播放失敗，請確認音訊連結或設備音量是否開啟");
+            console.error(err);
+          });
         } else {
           alert("此字卡尚未有音訊");
         }
@@ -55,5 +63,6 @@ Papa.parse(csvURL, {
   }
 });
 </script>
+
 </body>
 </html>
