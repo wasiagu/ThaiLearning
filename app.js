@@ -1,9 +1,9 @@
 let DATA = {};
 
 const CSV_URLS = {
-  Consonants: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSVeJINzJ9PNHuNJymHEle_ClecAuSKYdU5UgjovGsjuWDRMtIA5QQpmq59nZwKRDeqJlN_ACxyq3Mz/pubhtml?gid=0&single=true',
-  Vowels:     'https://docs.google.com/spreadsheets/d/e/2PACX-1vSVeJINzJ9PNHuNJymHEle_ClecAuSKYdU5UgjovGsjuWDRMtIA5QQpmq59nZwKRDeqJlN_ACxyq3Mz/pubhtml?gid=1209877284&single=true',
-  Numbers:    'https://docs.google.com/spreadsheets/d/e/2PACX-1vSVeJINzJ9PNHuNJymHEle_ClecAuSKYdU5UgjovGsjuWDRMtIA5QQpmq59nZwKRDeqJlN_ACxyq3Mz/pubhtml?gid=1402488737&single=true'
+  Consonants: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSVeJINzJ9PNHuNJymHEle_ClecAuSKYdU5UgjovGsjuWDRMtIA5QQpmq59nZwKRDeqJlN_ACxyq3Mz/pub?gid=0&single=true&output=csv',
+  Vowels:     'https://docs.google.com/spreadsheets/d/e/2PACX-1vSVeJINzJ9PNHuNJymHEle_ClecAuSKYdU5UgjovGsjuWDRMtIA5QQpmq59nZwKRDeqJlN_ACxyq3Mz/pub?gid=1209877284&single=true&output=csv',
+  Numbers:    'https://docs.google.com/spreadsheets/d/e/2PACX-1vSVeJINzJ9PNHuNJymHEle_ClecAuSKYdU5UgjovGsjuWDRMtIA5QQpmq59nZwKRDeqJlN_ACxyq3Mz/pub?gid=1402488737&single=true&output=csv'
 };
 
 
