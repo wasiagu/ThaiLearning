@@ -1,52 +1,66 @@
 let DATA = {};
+
 async function loadData() {
-  const r = await fetch('data/data.json');
-  DATA = await r.json();
+  const res = await fetch('https://script.google.com/macros/s/AKfycbwnQy2RWtBkFhgAowI6hBEg557oOp3WKXqVxEl0VBsjmhTmQw4p6SIb6TF_ChpkP0k1/exec');
+  const json = await res.json();
+  DATA.consonants = json.consonants;
+  DATA.vowels = json.vowels;
+  DATA.numbers = json.numbers;
 }
+
 function loadPage(page) {
-  if (page === 'alphabet') renderAlphabet();
+  if (page === 'consonants') renderConsonants();
+  if (page === 'vowels') renderVowels();
   if (page === 'numbers') renderNumbers();
-  if (page === 'vocab') renderVocab();
-  if (page === 'sentences') renderSentences();
 }
-function renderAlphabet() {
+
+function renderConsonants() {
   const app = document.getElementById('app');
-  let html = '<h2>字母表</h2><div class="grid">';
-  DATA.alphabet.forEach(a => {
-    html += `<div class='card' onclick="play('${a.audio}')"><h3>${a.letter}</h3><p>${a.type}</p><p>${a.name}</p></div>`;
+  let html = '<h2>子音表</h2><div class="grid">';
+  DATA.consonants.forEach(c => {
+    html += `<div class='card' onclick="play('${c.字母}')">
+                <h3>${c.字母}</h3>
+                <p>${c.種類}</p>
+                <p>${c.代表單字} / ${c.音標} / ${c.意思}</p>
+             </div>`;
   });
   html += '</div>';
   app.innerHTML = html;
 }
+
+function renderVowels() {
+  const app = document.getElementById('app');
+  let html = '<h2>母音表</h2><div class="grid">';
+  DATA.vowels.forEach(v => {
+    html += `<div class='card' onclick="play('${v.母音}')">
+                <h3>${v.母音}</h3>
+                <p>${v['長/短']}</p>
+                <p>${v.音標}</p>
+             </div>`;
+  });
+  html += '</div>';
+  app.innerHTML = html;
+}
+
 function renderNumbers() {
   const app = document.getElementById('app');
-  let html = '<h2>泰文數字與單位</h2><div class="grid">';
+  let html = '<h2>數字表</h2><div class="grid">';
   DATA.numbers.forEach(n => {
-    html += `<div class='card' onclick="play('${n.audio}')"><h3>${n.th}</h3><p>${n.zh} / ${n.num}</p></div>`;
+    html += `<div class='card' onclick="play('${n.字母}')">
+                <h3>${n.字母}</h3>
+                <p>${n.種類}</p>
+                <p>${n.代表單字} / ${n.音標} / ${n.意思}</p>
+             </div>`;
   });
   html += '</div>';
   app.innerHTML = html;
 }
-function renderVocab() {
-  const app = document.getElementById('app');
-  let saved = JSON.parse(localStorage.getItem('vocab') || '[]');
-  let html = '<h2>單字本</h2><div class="grid">';
-  saved.forEach(v => {
-    html += `<div class='card'><h3>${v.th}</h3><p>${v.zh}</p></div>`;
-  });
-  html += '</div>';
-  app.innerHTML = html;
+
+function play(text) {
+  if (!text) return;
+  const utter = new SpeechSynthesisUtterance(text);
+  utter.lang = 'th-TH';
+  speechSynthesis.speak(utter);
 }
-function renderSentences() {
-  const app = document.getElementById('app');
-  let html = '<h2>例句造句</h2>';
-  DATA.sentences.forEach(s => {
-    html += `<div class='card' onclick="play('${s.audio}')"><p>${s.th}</p><p>${s.zh}</p></div>`;
-  });
-  app.innerHTML = html;
-}
-function play(src) {
-  if (!src) return;
-  new Audio(src).play();
-}
+
 loadData();
