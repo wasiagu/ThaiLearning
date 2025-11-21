@@ -2,7 +2,7 @@ let DATA = {};
 
 async function loadData() {
   // 使用你 Google Apps Script 的 JSON URL
-  const res = await fetch('https://script.google.com/macros/s/AKfycbwnQy2RWtBkFhgAowI6hBEg557oOp3WKXqVxEl0VBsjmhTmQw4p6SIb6TF_ChpkP0k1/exec');
+  const res = await fetch('https://script.google.com/macros/s/AKfycbylBuNN5W5Tnf1mCqAnmzfpfYvzJpYEI8TR2LTrsPhwjQuaNBJYmf2A6JHhITggbNtz/exec');
   const json = await res.json();
   DATA = json; // 存整個 JSON
 }
