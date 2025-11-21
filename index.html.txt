@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<title>泰文數字字卡</title>
+<style>
+body { font-family: sans-serif; padding: 20px; }
+.card { display: inline-block; width: 150px; padding: 12px; margin: 10px; border-radius: 12px; background: #f0f0f0; text-align: center; box-shadow: 0 2px 8px rgba(0,0,0,0.15);}
+.thai { font-size: 28px; font-weight: bold; margin-bottom: 6px; }
+.number { font-size: 20px; margin-bottom: 4px; }
+.phonetic { font-size: 16px; color: #555; margin-bottom: 6px; }
+.speak-btn { cursor: pointer; font-size: 24px; display: inline-block; }
+</style>
+</head>
+<body>
+
+<h2>泰文數字字卡</h2>
+<div id="cards"></div>
+
+<!-- 引入 PapaParse 用於 CSV 轉 JSON -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.2/papaparse.min.js"></script>
+<script>
+const csvURL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTXw8CTZo7YY7DQYoIYyeF2yk3GMl5ibIdgDnsof1NXjD6rIkzClaGujQFQiqwhu7iBlwxFQOaibGG5/pub?gid=0&single=true&output=csv";
+const container = document.getElementById("cards");
+
+Papa.parse(csvURL, {
+  download: true,
+  header: true,
+  complete: function(results) {
+    const data = results.data;
+
+    data.forEach(item => {
+      if(!item['number']) return; // 避免空白行
+
+      const card = document.createElement("div");
+      card.className = "card";
+      card.innerHTML = `
+        <div class="thai">${item['thaiWriting']}</div>
+        <div class="number">Number: ${item['number']}</div>
+        <div class="phonetic">Phonetic: ${item['phonetic']}</div>
+        <span class="speak-btn">🔊</span>
+      `;
+      container.appendChild(card);
+
+      const btn = card.querySelector(".speak-btn");
+      btn.addEventListener("click", () => {
+        if(item['audioUrl']){
+          const audio = new Audio(item['audioUrl']);
+          audio.play();
+        } else {
+          alert("此字卡尚未有音訊");
+        }
+      });
+    });
+  }
+});
+</script>
+</body>
+</html>
