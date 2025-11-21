@@ -4,37 +4,59 @@
 <meta charset="UTF-8">
 <title>泰文數字字卡</title>
 <style>
-body { font-family: 'Noto Sans', sans-serif; background: #f7f7f7; padding: 20px; }
-#cards { display: flex; flex-wrap: wrap; justify-content: flex-start; }
+body { font-family: 'Noto Sans', sans-serif; background: #f7f7f7; padding: 16px; margin:0; }
+h2 { text-align: center; margin-bottom: 20px; }
+
+#cards { 
+  display: flex; 
+  flex-wrap: wrap; 
+  justify-content: center; /* 手機置中 */
+  gap: 12px; /* 卡片間距 */
+}
+
 .card {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  width: 160px;
+  width: 160px; /* 手機可調整 */
   padding: 16px;
-  margin: 12px;
   border-radius: 16px;
   background: linear-gradient(135deg, #fff8dc, #ffe4b5);
   text-align: center;
   box-shadow: 0 4px 12px rgba(0,0,0,0.15);
   transition: transform 0.2s, box-shadow 0.2s;
 }
+
 .card:hover { 
   transform: translateY(-4px);
   box-shadow: 0 6px 16px rgba(0,0,0,0.2);
 }
-.thaiDigit { font-size: 32px; font-weight: bold; color: #d2691e; margin-bottom: 6px; }
-.subtext { font-size: 18px; color: #333; margin-bottom: 4px; }
-.phonetic { font-size: 16px; color: #555; margin-bottom: 8px; }
+
+.thaiDigit { font-size: 28px; font-weight: bold; color: #d2691e; margin-bottom: 6px; }
+.subtext { font-size: 16px; color: #333; margin-bottom: 4px; }
+.phonetic { font-size: 14px; color: #555; margin-bottom: 8px; }
 .speak-btn {
   cursor: pointer;
   font-size: 28px;
   color: #1e90ff;
   transition: transform 0.2s, color 0.2s;
 }
+
 .speak-btn:hover { 
   transform: scale(1.2);
   color: #104e8b;
+}
+
+/* 手機響應式 */
+@media (max-width: 480px) {
+  .card {
+    width: 45%; /* 手機螢幕兩列顯示 */
+    padding: 12px;
+  }
+  .thaiDigit { font-size: 24px; }
+  .subtext { font-size: 14px; }
+  .phonetic { font-size: 12px; }
+  .speak-btn { font-size: 24px; }
 }
 </style>
 </head>
@@ -60,7 +82,6 @@ Papa.parse(csvURL, {
       const card = document.createElement("div");
       card.className = "card";
 
-      // 字卡內容
       card.innerHTML = `
         <div class="thaiDigit">${item['thaiDigit']}</div>
         <div class="subtext">${item['thaiWriting']} | ${item['number']}</div>
@@ -70,16 +91,12 @@ Papa.parse(csvURL, {
 
       container.appendChild(card);
 
-      // 喇叭點擊播放音訊
       const btn = card.querySelector(".speak-btn");
       btn.addEventListener("click", () => {
         if(item['audioUrl']){
           const audio = new Audio(item['audioUrl']);
           audio.type = "audio/mp4";
-          audio.play().catch(err => {
-            alert("播放失敗，請確認音訊連結或設備音量是否開啟");
-            console.error(err);
-          });
+          audio.play().catch(err => console.error(err));
         } else {
           alert("此字卡尚未有音訊");
         }
