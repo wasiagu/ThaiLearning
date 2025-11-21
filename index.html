@@ -2,6 +2,7 @@
 <html lang="zh-Hant">
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>泰文數字字卡</title>
 <style>
 body { font-family: 'Noto Sans', sans-serif; background: #f7f7f7; padding: 16px; margin:0; }
@@ -18,7 +19,7 @@ h2 { text-align: center; margin-bottom: 20px; }
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  width: 160px; /* 手機可調整 */
+  width: 160px; /* 桌機初始寬度 */
   padding: 16px;
   border-radius: 16px;
   background: linear-gradient(135deg, #fff8dc, #ffe4b5);
@@ -32,16 +33,15 @@ h2 { text-align: center; margin-bottom: 20px; }
   box-shadow: 0 6px 16px rgba(0,0,0,0.2);
 }
 
-.thaiDigit { font-size: 28px; font-weight: bold; color: #d2691e; margin-bottom: 6px; }
-.subtext { font-size: 16px; color: #333; margin-bottom: 4px; }
-.phonetic { font-size: 14px; color: #555; margin-bottom: 8px; }
+.thaiDigit { font-size: 32px; font-weight: bold; color: #d2691e; margin-bottom: 6px; }
+.subtext { font-size: 18px; color: #333; margin-bottom: 4px; }
+.phonetic { font-size: 16px; color: #555; margin-bottom: 8px; }
 .speak-btn {
   cursor: pointer;
   font-size: 28px;
   color: #1e90ff;
   transition: transform 0.2s, color 0.2s;
 }
-
 .speak-btn:hover { 
   transform: scale(1.2);
   color: #104e8b;
@@ -65,6 +65,7 @@ h2 { text-align: center; margin-bottom: 20px; }
 <h2>泰文數字字卡</h2>
 <div id="cards"></div>
 
+<!-- 引入 PapaParse -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.2/papaparse.min.js"></script>
 <script>
 const csvURL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTXw8CTZo7YY7DQYoIYyeF2yk3GMl5ibIdgDnsof1NXjD6rIkzClaGujQFQiqwhu7iBlwxFQOaibGG5/pub?gid=0&single=true&output=csv";
