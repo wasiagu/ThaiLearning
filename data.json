@@ -1,0 +1,7 @@
+[
+  {"type":"consonant","symbol":"ก","category":"middle","example":"กา (ka – 烏鴉)"},
+  {"type":"consonant","symbol":"ข","category":"high","example":"ขา (kha – 腿)"},
+  {"type":"vowel","symbol":"า","example":"กา (ka – 烏鴉)"},
+  {"type":"word","text":"หนึ่ง","translation":"1","example_sentence":"ฉันมีหนึ่งเล่ม"},
+  {"type":"sentence","text":"สวัสดีครับ","translation":"你好","example_sentence":"-"}
+]

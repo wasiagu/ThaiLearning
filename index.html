@@ -2,19 +2,22 @@
 <html lang="zh-Hant">
 <head>
   <meta charset="UTF-8">
-  <title>Thai Learning App</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>泰文學習互動網站</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <h1>泰文學習 Web App</h1>
-  <nav>
-    <button onclick="loadPage('Consonants')">子音表</button>
-    <button onclick="loadPage('Vowels')">母音表</button>
-    <button onclick="loadPage('Numbers')">數字表</button>
-  </nav>
+  <h1>泰文學習互動網站</h1>
 
-  <div id="app"></div>
-  <script src="app.js"></script>
+  <div class="tabs">
+    <button data-type="consonant">子音</button>
+    <button data-type="vowel">母音</button>
+    <button data-type="word">單字</button>
+    <button data-type="sentence">句子</button>
+  </div>
+
+  <div id="card-container"></div>
+
+  <script src="script.js"></script>
 </body>
 </html>
