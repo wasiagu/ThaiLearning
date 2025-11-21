@@ -1,61 +1,45 @@
 let DATA = {};
 
 async function loadData() {
+  // 使用你 Google Apps Script 的 JSON URL
   const res = await fetch('https://script.google.com/macros/s/AKfycbwnQy2RWtBkFhgAowI6hBEg557oOp3WKXqVxEl0VBsjmhTmQw4p6SIb6TF_ChpkP0k1/exec');
   const json = await res.json();
-  DATA.consonants = json.consonants;
-  DATA.vowels = json.vowels;
-  DATA.numbers = json.numbers;
+  DATA = json; // 存整個 JSON
 }
 
-function loadPage(page) {
-  if (page === 'consonants') renderConsonants();
-  if (page === 'vowels') renderVowels();
-  if (page === 'numbers') renderNumbers();
-}
+function loadPage(sheetName) {
+  if (!DATA[sheetName] || DATA[sheetName].length === 0) {
+    document.getElementById('app').innerHTML = '<p>沒有資料或 Sheet 名稱錯誤: ' + sheetName + '</p>';
+    return;
+  }
 
-function renderConsonants() {
   const app = document.getElementById('app');
-  let html = '<h2>子音表</h2><div class="grid">';
-  DATA.consonants.forEach(c => {
-    html += `<div class='card' onclick="play('${c.字母}')">
-                <h3>${c.字母}</h3>
-                <p>${c.種類}</p>
-                <p>${c.代表單字} / ${c.音標} / ${c.意思}</p>
-             </div>`;
+  let html = '<h2>' + sheetName + '</h2><div class="grid">';
+
+  DATA[sheetName].forEach(item => {
+    html += `<div class='card' onclick="play('${item.字母 || item.母音}')">`;
+    
+    // 子音或數字
+    if(item.字母) {
+      html += `<h3>${item.字母}</h3>`;
+      html += `<p>${item.種類 || ''}</p>`;
+      html += `<p>${item.代表單字 || ''} / ${item.音標 || ''} / ${item.意思 || ''}</p>`;
+    }
+    // 母音
+    else if(item.母音) {
+      html += `<h3>${item.母音}</h3>`;
+      html += `<p>${item['長/短'] || ''}</p>`;
+      html += `<p>${item.音標 || ''}</p>`;
+    }
+
+    html += `</div>`;
   });
+
   html += '</div>';
   app.innerHTML = html;
 }
 
-function renderVowels() {
-  const app = document.getElementById('app');
-  let html = '<h2>母音表</h2><div class="grid">';
-  DATA.vowels.forEach(v => {
-    html += `<div class='card' onclick="play('${v.母音}')">
-                <h3>${v.母音}</h3>
-                <p>${v['長/短']}</p>
-                <p>${v.音標}</p>
-             </div>`;
-  });
-  html += '</div>';
-  app.innerHTML = html;
-}
-
-function renderNumbers() {
-  const app = document.getElementById('app');
-  let html = '<h2>數字表</h2><div class="grid">';
-  DATA.numbers.forEach(n => {
-    html += `<div class='card' onclick="play('${n.字母}')">
-                <h3>${n.字母}</h3>
-                <p>${n.種類}</p>
-                <p>${n.代表單字} / ${n.音標} / ${n.意思}</p>
-             </div>`;
-  });
-  html += '</div>';
-  app.innerHTML = html;
-}
-
+// Web Speech API 發音
 function play(text) {
   if (!text) return;
   const utter = new SpeechSynthesisUtterance(text);
@@ -63,4 +47,5 @@ function play(text) {
   speechSynthesis.speak(utter);
 }
 
+// 先載入 JSON
 loadData();
