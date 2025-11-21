@@ -34,6 +34,8 @@
         border-radius: 8px;
         border: 1px solid #ccc;
         font-size: 16px;
+        flex: 2;          /* 自動調整寬度 */
+        min-width: 100px;
     }
 
     .font-btn {
@@ -43,6 +45,9 @@
         cursor: pointer;
         background: #ddd;
         font-size: 15px;
+        flex: 1;           /* 自動調整寬度 */
+        min-width: 80px;
+        text-align: center;
     }
 
     .font-btn.active {
@@ -54,6 +59,8 @@
         display: grid;
         grid-template-columns: 1fr;
         gap: 18px;
+        max-width: 100%;
+        overflow-x: hidden; /* 防止水平滾動 */
     }
 
     @media (min-width: 768px) {
@@ -68,7 +75,7 @@
         padding: 15px;
         box-shadow: 0 2px 6px rgba(0,0,0,0.1);
         width: 100%;
-        max-width: 500px;
+        max-width: 500px;  /* 桌機最大寬度 */
         margin: auto;
         display: flex;
         flex-direction: column;
@@ -78,7 +85,7 @@
 
     @media (max-width: 767px) {
         .card {
-            max-width: 100%;
+            max-width: 100%; /* 手機自動寬度 */
         }
     }
 
