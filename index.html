@@ -4,12 +4,38 @@
 <meta charset="UTF-8">
 <title>泰文數字字卡</title>
 <style>
-body { font-family: sans-serif; padding: 20px; }
-.card { display: inline-block; width: 150px; padding: 12px; margin: 10px; border-radius: 12px; background: #f0f0f0; text-align: center; box-shadow: 0 2px 8px rgba(0,0,0,0.15);}
-.thai { font-size: 28px; font-weight: bold; margin-bottom: 6px; }
-.number { font-size: 20px; margin-bottom: 4px; }
-.phonetic { font-size: 16px; color: #555; margin-bottom: 6px; }
-.speak-btn { cursor: pointer; font-size: 24px; display: inline-block; }
+body { font-family: 'Noto Sans', sans-serif; background: #f7f7f7; padding: 20px; }
+#cards { display: flex; flex-wrap: wrap; justify-content: flex-start; }
+.card {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  width: 160px;
+  padding: 16px;
+  margin: 12px;
+  border-radius: 16px;
+  background: linear-gradient(135deg, #fff8dc, #ffe4b5);
+  text-align: center;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+.card:hover { 
+  transform: translateY(-4px);
+  box-shadow: 0 6px 16px rgba(0,0,0,0.2);
+}
+.thaiDigit { font-size: 32px; font-weight: bold; color: #d2691e; margin-bottom: 6px; }
+.subtext { font-size: 18px; color: #333; margin-bottom: 4px; }
+.phonetic { font-size: 16px; color: #555; margin-bottom: 8px; }
+.speak-btn {
+  cursor: pointer;
+  font-size: 28px;
+  color: #1e90ff;
+  transition: transform 0.2s, color 0.2s;
+}
+.speak-btn:hover { 
+  transform: scale(1.2);
+  color: #104e8b;
+}
 </style>
 </head>
 <body>
@@ -17,7 +43,6 @@ body { font-family: sans-serif; padding: 20px; }
 <h2>泰文數字字卡</h2>
 <div id="cards"></div>
 
-<!-- 引入 PapaParse 用於 CSV 轉 JSON -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.2/papaparse.min.js"></script>
 <script>
 const csvURL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTXw8CTZo7YY7DQYoIYyeF2yk3GMl5ibIdgDnsof1NXjD6rIkzClaGujQFQiqwhu7iBlwxFQOaibGG5/pub?gid=0&single=true&output=csv";
@@ -32,25 +57,25 @@ Papa.parse(csvURL, {
     data.forEach(item => {
       if(!item['number']) return; // 避免空白行
 
-      // 建立字卡
       const card = document.createElement("div");
       card.className = "card";
+
+      // 字卡內容
       card.innerHTML = `
-        <div class="thai">${item['thaiWriting']}</div>
-        <div class="number">Number: ${item['number']}</div>
-        <div class="phonetic">Phonetic: ${item['phonetic']}</div>
+        <div class="thaiDigit">${item['thaiDigit']}</div>
+        <div class="subtext">${item['thaiWriting']} | ${item['number']}</div>
+        <div class="phonetic">${item['phonetic']}</div>
         <span class="speak-btn">🔊</span>
       `;
+
       container.appendChild(card);
 
-      // 點擊播放音訊
+      // 喇叭點擊播放音訊
       const btn = card.querySelector(".speak-btn");
       btn.addEventListener("click", () => {
         if(item['audioUrl']){
-          // 建立 audio 元素，確保 type 為 audio/mp4
-          const audio = new Audio();
-          audio.src = item['audioUrl'];
-          audio.type = "audio/mp4"; 
+          const audio = new Audio(item['audioUrl']);
+          audio.type = "audio/mp4";
           audio.play().catch(err => {
             alert("播放失敗，請確認音訊連結或設備音量是否開啟");
             console.error(err);
