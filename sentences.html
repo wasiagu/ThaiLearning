@@ -21,12 +21,14 @@
         font-weight: 600;
     }
 
+    /* 上方工具列 */
     .top-bar {
         display: flex;
         gap: 10px;
         align-items: center;
         margin-bottom: 20px;
         flex-wrap: wrap;
+        justify-content: center;
     }
 
     select {
@@ -34,7 +36,7 @@
         border-radius: 8px;
         border: 1px solid #ccc;
         font-size: 16px;
-        flex: 2;          /* 自動調整寬度 */
+        flex: 2;
         min-width: 100px;
     }
 
@@ -45,7 +47,7 @@
         cursor: pointer;
         background: #ddd;
         font-size: 15px;
-        flex: 1;           /* 自動調整寬度 */
+        flex: 1;
         min-width: 80px;
         text-align: center;
     }
@@ -55,12 +57,14 @@
         color: white;
     }
 
+    /* 字卡容器 */
     .grid {
         display: grid;
         grid-template-columns: 1fr;
         gap: 18px;
         max-width: 100%;
-        overflow-x: hidden; /* 防止水平滾動 */
+        overflow-x: hidden;
+        justify-items: center;
     }
 
     @media (min-width: 768px) {
@@ -69,26 +73,39 @@
         }
     }
 
+    /* 字卡 */
     .card {
         background: white;
         border-radius: 12px;
         padding: 15px;
         box-shadow: 0 2px 6px rgba(0,0,0,0.1);
         width: 100%;
-        max-width: 500px;  /* 桌機最大寬度 */
-        margin: auto;
+        max-width: 500px;
         display: flex;
         flex-direction: column;
         gap: 5px;
         box-sizing: border-box;
     }
 
+    /* 手機：字卡縮小、置中、左右留白 */
     @media (max-width: 767px) {
         .card {
-            max-width: 100%; /* 手機自動寬度 */
+            width: 85%;
+            max-width: 85%;
+            margin: 0 auto;
+        }
+
+        select {
+            width: 90%;
+        }
+
+        .font-btn {
+            width: 42%;
+            flex: 0 0 auto;
         }
     }
 
+    /* 卡片內的排版 */
     .header-row {
         font-size: 14px;
         color: #666;
@@ -105,7 +122,7 @@
     }
 
     .mean {
-        font-size: 25px;
+        font-size: 20px;
         color: #444;
     }
 
@@ -119,6 +136,7 @@
 
 <h1>例句示範</h1>
 
+<!-- 工具列 -->
 <div class="top-bar">
     <select id="lessonFilter">
         <option value="all">全部課程</option>
@@ -128,6 +146,7 @@
     <button class="font-btn" id="fontKanit">粗體</button>
 </div>
 
+<!-- 字卡 -->
 <div id="cardContainer" class="grid"></div>
 
 <script>
@@ -136,7 +155,7 @@ const SHEET_URL =
 
 let allData = [];
 
-/* CSV 解析函式 */
+/* CSV 解析 */
 function parseCSV(text) {
     const lines = text.trim().split("\n");
     const headers = lines[0].split(",").map(h => h.trim());
@@ -149,22 +168,22 @@ function parseCSV(text) {
     return data;
 }
 
-/* 自動縮小 sentence 字體，只對超長文字縮小 */
+/* sentence 自動縮小字體 */
 function fitText(sentenceEl, maxWidth) {
     let fontSize = 30;
     sentenceEl.style.fontSize = fontSize + "px";
 
     const meanEl = sentenceEl.nextElementSibling;
-    if (meanEl) meanEl.style.fontSize = (fontSize - 5) + "px";
+    if (meanEl) meanEl.style.fontSize = (fontSize - 10) + "px";
 
-    while (sentenceEl.scrollWidth > maxWidth && fontSize > 24) {
+    while (sentenceEl.scrollWidth > maxWidth && fontSize > 20) {
         fontSize--;
         sentenceEl.style.fontSize = fontSize + "px";
-        if (meanEl) meanEl.style.fontSize = (fontSize - 5) + "px";
+        if (meanEl) meanEl.style.fontSize = (fontSize - 10) + "px";
     }
 }
 
-/* 讀取 CSV，防止快取 */
+/* 讀取 CSV 避免快取 */
 async function loadCSV() {
     try {
         const res = await fetch(SHEET_URL + "&t=" + new Date().getTime());
@@ -177,7 +196,7 @@ async function loadCSV() {
     }
 }
 
-/* 填入 lesson 選項 */
+/* 篩選器選項 */
 function populateFilter() {
     const lessons = [...new Set(allData.map(i => i.lesson))];
     const filter = document.getElementById("lessonFilter");
@@ -190,7 +209,7 @@ function populateFilter() {
     });
 }
 
-/* 顯示卡片 */
+/* 產生卡片 */
 function renderCards(lesson) {
     const container = document.getElementById("cardContainer");
     container.innerHTML = "";
@@ -238,7 +257,7 @@ document.getElementById("fontKanit").onclick = () => {
     document.getElementById("fontSarabun").classList.remove("active");
 };
 
-/* 篩選器 */
+/* 篩選 */
 document.getElementById("lessonFilter").addEventListener("change", (e) => {
     renderCards(e.target.value);
 });
