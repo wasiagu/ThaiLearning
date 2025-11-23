@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>泰文子音表</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Sarabun&family=Kanit&display=swap" rel="stylesheet">
+
+<style>
+    body {
+        margin: 0;
+        padding: 20px;
+        font-family: 'Sarabun', sans-serif;
+        background: #fafafa;
+    }
+
+    h1 {
+        text-align: center;
+        margin-bottom: 20px;
+        font-size: 26px;
+    }
+
+    .top-bar {
+        display: flex;
+        gap: 10px;
+        justify-content: center;
+        margin-bottom: 20px;
+        flex-wrap: wrap;
+    }
+
+    .sort-btn {
+        padding: 8px 14px;
+        border-radius: 8px;
+        border: none;
+        cursor: pointer;
+        background: #ddd;
+        font-size: 15px;
+    }
+
+    .sort-btn.active {
+        background: #4a90e2;
+        color: white;
+    }
+
+    .grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 15px;
+        justify-items: center;
+    }
+
+    @media (min-width: 768px) {
+        .grid {
+            grid-template-columns: repeat(5, 1fr);
+        }
+    }
+
+    .card {
+        background: white;
+        border-radius: 12px;
+        padding: 15px;
+        box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+        width: 100%;
+        max-width: 160px;
+        box-sizing: border-box;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        gap: 5px;
+    }
+
+    .header-row {
+        width: 100%;
+        font-size: 13px;
+        color: #666;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .icon {
+        cursor: pointer;
+        font-size: 18px;
+    }
+
+    .consonant {
+        font-size: 47px;
+        font-weight: bold;
+        margin: 6px 0;
+        white-space: nowrap;
+    }
+
+    .consonant.mid { color: red; }
+    .consonant.high { color: green; }
+    .consonant.low { color: purple; }
+
+    .sub-info {
+        font-size: 16px;
+        white-space: nowrap;
+    }
+
+    .sub-info.vocabulary {
+        font-size: 24px;
+    }
+
+    .sub-info.phonetic {
+        color: #888;
+    }
+</style>
+</head>
+
+<body>
+
+<h1>泰文子音表</h1>
+
+<div class="top-bar">
+    <button class="sort-btn active" id="sortAllBtn">依子音順序排序</button>
+    <button class="sort-btn" id="sortTypeBtn">依種類順序排序</button>
+</div>
+
+<div id="cardContainer" class="grid"></div>
+
+<script>
+const CSV_URL = 
+ "https://docs.google.com/spreadsheets/d/e/2PACX-1vQzOKldlSUcO-VJXpW_t4Mc3D2Sm00-u1WvBTlhWl036mA8UqAOCUkj0JGSHms2W1giIqT3Q3OiHMPe/pub?gid=0&single=true&output=csv";
+
+let allData = [];
+
+function parseCSV(text) {
+    const lines = text.trim().split("\n");
+    const headers = lines[0].split(",").map(h => h.trim());
+    return lines.slice(1).map(line => {
+        const values = line.split(",").map(v => v.trim());
+        let obj = {};
+        headers.forEach((h, i) => obj[h] = values[i] || "");
+        return obj;
+    });
+}
+
+async function loadCSV() {
+    const res = await fetch(CSV_URL + "&t=" + new Date().getTime());
+    const text = await res.text();
+    allData = parseCSV(text);
+    render("all");
+}
+
+function render(mode) {
+    const container = document.getElementById("cardContainer");
+    container.innerHTML = "";
+
+    let sorted = [...allData];
+
+    if (mode === "all") {
+        sorted.sort((a, b) => Number(a.sortAll) - Number(b.sortAll));
+        document.getElementById("sortAllBtn").classList.add("active");
+        document.getElementById("sortTypeBtn").classList.remove("active");
+    } else {
+        sorted.sort((a, b) => Number(a.sortType) - Number(b.sortType));
+        document.getElementById("sortTypeBtn").classList.add("active");
+        document.getElementById("sortAllBtn").classList.remove("active");
+    }
+
+    sorted.forEach(item => {
+        let colorClass = "";
+        if (item.type === "中") colorClass = "mid";
+        else if (item.type === "高") colorClass = "high";
+        else if (item.type === "低(上" || item.type === "低(下") colorClass = "low";
+
+        const card = document.createElement("div");
+        card.className = "card";
+
+        card.innerHTML = `
+            <div class="header-row">
+                <span>${item.type}</span>
+                <span class="icon" onclick="playSound('${item.audioURL}')">🔊</span>
+            </div>
+
+            <div class="consonant ${colorClass}">${item.consonant}</div>
+
+            <div class="sub-info vocabulary">${item.vocabulary}</div>
+            <div class="sub-info phonetic">${item.Phonetic}</div>
+            <div class="sub-info">${item.mean}</div>
+        `;
+
+        container.appendChild(card);
+    });
+}
+
+function playSound(url) {
+    const audio = new Audio(url);
+    audio.play();
+}
+
+document.getElementById("sortAllBtn").onclick = () => render("all");
+document.getElementById("sortTypeBtn").onclick = () => render("type");
+
+loadCSV();
+</script>
+
+</body>
+</html>
