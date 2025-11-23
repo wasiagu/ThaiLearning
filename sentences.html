@@ -19,36 +19,27 @@ h1 {
     margin-bottom: 15px;
     font-size: 26px;
     font-weight: 600;
-    text-align: center;
 }
 
-/* 上方工具列 */
+/* 工具列 */
 .top-bar {
     display: flex;
     flex-wrap: wrap;
     gap: 10px;
-    justify-content: center;
-    margin-bottom: 20px;
     align-items: center;
+    margin-bottom: 20px;
 }
 
+/* Lesson 篩選 */
 select {
     padding: 8px 12px;
     border-radius: 8px;
     border: 1px solid #ccc;
     font-size: 16px;
-    flex: 0 0 auto; /* 自動寬度符合文字 */
-    white-space: nowrap;
+    flex: 0 0 auto;
 }
 
-.font-buttons {
-    display: flex;
-    gap: 10px;
-    width: 100%;
-    justify-content: center;
-    margin-top: 5px; /* 換行距離 */
-}
-
+/* 字型切換按鈕 */
 .font-btn {
     padding: 8px 14px;
     border-radius: 8px;
@@ -56,9 +47,7 @@ select {
     cursor: pointer;
     background: #ddd;
     font-size: 15px;
-    text-align: center;
 }
-
 .font-btn.active {
     background: #4a90e2;
     color: white;
@@ -67,13 +56,13 @@ select {
 /* 字卡容器 */
 .grid {
     display: grid;
-    grid-template-columns: 1fr;
+    grid-template-columns: 1fr; /* 手機版一欄 */
     gap: 18px;
     max-width: 100%;
     justify-items: center;
 }
 
-/* 桌機 2 欄 */
+/* 桌機版兩欄 */
 @media (min-width: 768px) {
     .grid {
         grid-template-columns: repeat(2, 1fr);
@@ -88,17 +77,19 @@ select {
     box-shadow: 0 2px 6px rgba(0,0,0,0.1);
     width: 95%;
     max-width: 500px;
+    margin: 0 auto;
     display: flex;
     flex-direction: column;
     gap: 5px;
     box-sizing: border-box;
-
-    /* sentence 垂直置中 */
     justify-content: center;
+    align-items: center;
+    text-align: center;
 }
 
-/* 卡片內的排版 */
+/* 標題列 */
 .header-row {
+    width: 100%;
     font-size: 14px;
     color: #666;
     display: flex;
@@ -107,39 +98,25 @@ select {
     white-space: nowrap;
 }
 
+/* sentence & mean */
 .sentence {
     font-size: 30px;
     white-space: nowrap;
     overflow: visible;
-    text-align: center;
-    font-weight: normal;
-    line-height: 1.2;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .mean {
-    font-size: 18px; /* 約 sentence 的 60% */
-    color: #666;
-    text-align: center;
+    font-size: 18px; /* 60% of 30px */
+    color: #888;
 }
 
+/* 喇叭圖示 */
 .icon {
     cursor: pointer;
     font-size: 20px;
-}
-
-/* 手機版 */
-@media (max-width: 767px) {
-    .card {
-        width: 95%;
-        max-width: 95%;
-    }
-    select {
-        width: auto;
-    }
-    .font-btn {
-        width: 42%;
-        flex: 0 0 auto;
-    }
 }
 </style>
 </head>
@@ -147,24 +124,20 @@ select {
 
 <h1>例句示範</h1>
 
-<!-- 工具列 -->
 <div class="top-bar">
     <select id="lessonFilter">
         <option value="all">全部課程</option>
     </select>
-</div>
-
-<div class="font-buttons">
+    <div style="width: 100%;"></div>
     <button class="font-btn active" id="fontSarabun">標準</button>
     <button class="font-btn" id="fontKanit">粗體</button>
 </div>
 
-<!-- 字卡 -->
 <div id="cardContainer" class="grid"></div>
 
 <script>
 const SHEET_URL =
- "https://docs.google.com/spreadsheets/d/e/2PACX-1vQT22bpMZemxklSq6isHxOOijiQ7ma5e_-etlFwgmnVe0g8qAE1R1hycUSTfeqbft3Q2INACVnHrBwr/pub?gid=0&single=true&output=csv";
+"https://docs.google.com/spreadsheets/d/e/2PACX-1vQT22bpMZemxklSq6isHxOOijiQ7ma5e_-etlFwgmnVe0g8qAE1R1hycUSTfeqbft3Q2INACVnHrBwr/pub?gid=0&single=true&output=csv";
 
 let allData = [];
 
@@ -175,18 +148,15 @@ function parseCSV(text) {
     return lines.slice(1).map(line => {
         const values = line.split(",").map(v => v.trim());
         let obj = {};
-        headers.forEach((h,i) => obj[h] = values[i] || "");
+        headers.forEach((h, i) => obj[h] = values[i] || "");
         return obj;
     });
 }
 
-/* sentence 自動縮小 & 垂直置中 */
-function fitText(sentenceEl) {
-    const card = sentenceEl.closest('.card');
-    const maxWidth = card.clientWidth - 10;
+/* 自動縮小 sentence 字體 */
+function fitText(sentenceEl, maxWidth) {
     let fontSize = 30;
     sentenceEl.style.fontSize = fontSize + "px";
-    sentenceEl.style.lineHeight = "1.2";
 
     const meanEl = sentenceEl.nextElementSibling;
     if (meanEl) meanEl.style.fontSize = (fontSize * 0.6) + "px";
@@ -196,11 +166,6 @@ function fitText(sentenceEl) {
         sentenceEl.style.fontSize = fontSize + "px";
         if (meanEl) meanEl.style.fontSize = (fontSize * 0.6) + "px";
     }
-
-    // 垂直置中
-    card.style.display = "flex";
-    card.style.flexDirection = "column";
-    card.style.justifyContent = "center";
 }
 
 /* 讀取 CSV */
@@ -209,24 +174,18 @@ async function loadCSV() {
         const res = await fetch(SHEET_URL + "&t=" + new Date().getTime());
         const text = await res.text();
         allData = parseCSV(text);
-
-        // 依 lesson -> number 排序
-        allData.sort((a,b) => {
-            if(a.lesson === b.lesson) return Number(a.number) - Number(b.number);
-            return a.lesson.localeCompare(b.lesson);
-        });
-
         populateFilter();
         renderCards("all");
-    } catch(err) {
+    } catch (err) {
         console.error("CSV 讀取失敗:", err);
     }
 }
 
-/* 填入 lesson 篩選器 */
+/* 填入 lesson 篩選 */
 function populateFilter() {
     const lessons = [...new Set(allData.map(i => i.lesson))];
     const filter = document.getElementById("lessonFilter");
+
     lessons.forEach(l => {
         const op = document.createElement("option");
         op.value = l;
@@ -244,6 +203,8 @@ function renderCards(lesson) {
         ? allData
         : allData.filter(i => i.lesson === lesson);
 
+    filtered.sort((a,b) => Number(a.lesson) - Number(b.lesson) || Number(a.number) - Number(b.number));
+
     filtered.forEach(item => {
         const card = document.createElement("div");
         card.className = "card";
@@ -256,10 +217,11 @@ function renderCards(lesson) {
             <div class="sentence">${item.sentence}</div>
             <div class="mean">${item.mean}</div>
         `;
+
         container.appendChild(card);
 
         const sentenceEl = card.querySelector(".sentence");
-        fitText(sentenceEl);
+        fitText(sentenceEl, card.clientWidth - 20); // 保留左右padding
     });
 }
 
@@ -269,7 +231,7 @@ function playSound(url) {
     audio.play();
 }
 
-/* 字體切換 */
+/* 字型切換 */
 document.getElementById("fontSarabun").onclick = () => {
     document.body.style.fontFamily = "'Sarabun', sans-serif";
     document.getElementById("fontSarabun").classList.add("active");
@@ -281,7 +243,7 @@ document.getElementById("fontKanit").onclick = () => {
     document.getElementById("fontSarabun").classList.remove("active");
 };
 
-/* 篩選器 */
+/* 篩選 */
 document.getElementById("lessonFilter").addEventListener("change", (e) => {
     renderCards(e.target.value);
 });
