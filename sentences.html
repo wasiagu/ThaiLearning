@@ -8,11 +8,13 @@
 <link href="https://fonts.googleapis.com/css2?family=Sarabun&family=Kanit&display=swap" rel="stylesheet">
 
 <style>
-    body {
+    html, body {
         margin: 0;
+        padding: 0;
         font-family: 'Sarabun', sans-serif;
         background: #fafafa;
         padding: 20px;
+        -webkit-text-size-adjust: 100%; /* 禁止 Safari 自動縮放字體 */
     }
 
     h1 {
@@ -62,8 +64,7 @@
         grid-template-columns: 1fr;
         gap: 18px;
         max-width: 100%;
-        overflow-x: hidden;
-        justify-items: center;
+        justify-items: center; /* 置中卡片 */
     }
 
     @media (min-width: 768px) {
@@ -72,26 +73,26 @@
         }
     }
 
-    /* 字卡樣式 */
+    /* 字卡 */
     .card {
         background: white;
         border-radius: 12px;
         padding: 15px;
         box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-        width: 100%;
+        width: 95%;
         max-width: 500px;
         display: flex;
         flex-direction: column;
         gap: 5px;
         box-sizing: border-box;
+        margin-left: auto;
+        margin-right: auto;
     }
 
-    /* 手機版字卡：90% 寬度置中 */
     @media (max-width: 767px) {
         .card {
-            width: 90%;
-            max-width: 90%;
-            margin: 0 auto;
+            width: 95%;
+            max-width: 95%;
         }
 
         select {
@@ -133,7 +134,6 @@
 
 <h1>例句示範</h1>
 
-<!-- 工具列 -->
 <div class="top-bar">
     <select id="lessonFilter">
         <option value="all">全部課程</option>
@@ -143,7 +143,6 @@
     <button class="font-btn" id="fontKanit">粗體</button>
 </div>
 
-<!-- 字卡 -->
 <div id="cardContainer" class="grid"></div>
 
 <script>
@@ -165,8 +164,11 @@ function parseCSV(text) {
     return data;
 }
 
-/* sentence 自動縮小字體，mean 永遠小 10px */
-function fitText(sentenceEl, maxWidth) {
+/* sentence 自動縮小字體 */
+function fitText(sentenceEl) {
+    const cardWidth = sentenceEl.parentElement.clientWidth;
+    const maxWidth = cardWidth - 20; // 預留 padding
+
     let fontSize = 30;
     sentenceEl.style.fontSize = fontSize + "px";
 
@@ -193,7 +195,7 @@ async function loadCSV() {
     }
 }
 
-/* 篩選器 */
+/* 填入篩選選項 */
 function populateFilter() {
     const lessons = [...new Set(allData.map(i => i.lesson))];
     const filter = document.getElementById("lessonFilter");
@@ -231,7 +233,7 @@ function renderCards(lesson) {
         container.appendChild(card);
 
         const sentenceEl = card.querySelector(".sentence");
-        fitText(sentenceEl, 500);
+        fitText(sentenceEl);
     });
 }
 
