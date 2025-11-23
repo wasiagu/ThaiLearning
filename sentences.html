@@ -8,116 +8,132 @@
 <link href="https://fonts.googleapis.com/css2?family=Sarabun&family=Kanit&display=swap" rel="stylesheet">
 
 <style>
-body {
-    margin: 0;
-    font-family: 'Sarabun', sans-serif;
-    background: #fafafa;
-    padding: 20px;
-}
-
-h1 {
-    margin-bottom: 15px;
-    font-size: 26px;
-    font-weight: 600;
-}
-
-/* 工具列 */
-.top-bar {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 10px;
-    align-items: center;
-    margin-bottom: 20px;
-}
-
-/* Lesson 篩選 */
-select {
-    padding: 8px 12px;
-    border-radius: 8px;
-    border: 1px solid #ccc;
-    font-size: 16px;
-    flex: 0 0 auto;
-}
-
-/* 字型切換按鈕 */
-.font-btn {
-    padding: 8px 14px;
-    border-radius: 8px;
-    border: none;
-    cursor: pointer;
-    background: #ddd;
-    font-size: 15px;
-}
-.font-btn.active {
-    background: #4a90e2;
-    color: white;
-}
-
-/* 字卡容器 */
-.grid {
-    display: grid;
-    grid-template-columns: 1fr; /* 手機版一欄 */
-    gap: 18px;
-    max-width: 100%;
-    justify-items: center;
-}
-
-/* 桌機版兩欄 */
-@media (min-width: 768px) {
-    .grid {
-        grid-template-columns: repeat(2, 1fr);
+    body {
+        margin: 0;
+        padding: 20px;
+        font-family: 'Sarabun', sans-serif;
+        background: #fafafa;
     }
-}
 
-/* 字卡 */
-.card {
-    background: white;
-    border-radius: 12px;
-    padding: 20px;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-    width: 95%;
-    max-width: 500px;
-    margin: 0 auto;
-    display: flex;
-    flex-direction: column;
-    gap: 5px;
-    box-sizing: border-box;
-    justify-content: center;
-    align-items: center;
-    text-align: center;
-}
+    h1 {
+        margin-bottom: 15px;
+        font-size: 26px;
+        font-weight: 600;
+        text-align: center;
+    }
 
-/* 標題列 */
-.header-row {
-    width: 100%;
-    font-size: 14px;
-    color: #666;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    white-space: nowrap;
-}
+    /* 上方工具列 */
+    .top-bar {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-between;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 20px;
+    }
 
-/* sentence & mean */
-.sentence {
-    font-size: 30px;
-    white-space: nowrap;
-    overflow: visible;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
+    select {
+        padding: 8px 12px;
+        border-radius: 8px;
+        border: 1px solid #ccc;
+        font-size: 16px;
+    }
 
-.mean {
-    font-size: 18px; /* 60% of 30px */
-    color: #888;
-}
+    .font-btn {
+        padding: 8px 14px;
+        border-radius: 8px;
+        border: none;
+        cursor: pointer;
+        background: #ddd;
+        font-size: 15px;
+        text-align: center;
+    }
 
-/* 喇叭圖示 */
-.icon {
-    cursor: pointer;
-    font-size: 20px;
-}
+    .font-btn.active {
+        background: #4a90e2;
+        color: white;
+    }
+
+    /* 字卡容器 */
+    .grid {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 18px;
+        justify-items: center;
+    }
+
+    @media (min-width: 768px) {
+        .grid {
+            grid-template-columns: repeat(2, 1fr);
+        }
+    }
+
+    /* 字卡 */
+    .card {
+        background: white;
+        border-radius: 12px;
+        padding: 15px;
+        box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+        width: 95%;
+        max-width: 500px;
+        margin: 0 auto;
+        display: flex;
+        flex-direction: column;
+        gap: 5px;
+        box-sizing: border-box;
+    }
+
+    @media (max-width: 767px) {
+        body {
+            padding-left: 5px;
+            padding-right: 5px;
+        }
+        .card {
+            width: 90%;
+            max-width: 90%;
+        }
+        select {
+            width: 100%;
+            margin-bottom: 10px;
+        }
+        .font-btn {
+            width: 48%;
+            margin-bottom: 5px;
+        }
+    }
+
+    .header-row {
+        font-size: 14px;
+        color: #666;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        white-space: nowrap;
+    }
+
+    .sentence-wrapper {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 100%;
+        min-height: 36px;
+    }
+
+    .sentence {
+        font-size: 30px;
+        white-space: nowrap;
+        display: inline-block;
+    }
+
+    .mean {
+        font-size: 18px;
+        color: #777;
+    }
+
+    .icon {
+        cursor: pointer;
+        font-size: 20px;
+    }
 </style>
 </head>
 <body>
@@ -128,7 +144,9 @@ select {
     <select id="lessonFilter">
         <option value="all">全部課程</option>
     </select>
-    <div style="width: 100%;"></div>
+</div>
+
+<div class="top-bar">
     <button class="font-btn active" id="fontSarabun">標準</button>
     <button class="font-btn" id="fontKanit">粗體</button>
 </div>
@@ -137,7 +155,7 @@ select {
 
 <script>
 const SHEET_URL =
-"https://docs.google.com/spreadsheets/d/e/2PACX-1vQT22bpMZemxklSq6isHxOOijiQ7ma5e_-etlFwgmnVe0g8qAE1R1hycUSTfeqbft3Q2INACVnHrBwr/pub?gid=0&single=true&output=csv";
+ "https://docs.google.com/spreadsheets/d/e/2PACX-1vQT22bpMZemxklSq6isHxOOijiQ7ma5e_-etlFwgmnVe0g8qAE1R1hycUSTfeqbft3Q2INACVnHrBwr/pub?gid=0&single=true&output=csv";
 
 let allData = [];
 
@@ -145,30 +163,30 @@ let allData = [];
 function parseCSV(text) {
     const lines = text.trim().split("\n");
     const headers = lines[0].split(",").map(h => h.trim());
-    return lines.slice(1).map(line => {
+    const data = lines.slice(1).map(line => {
         const values = line.split(",").map(v => v.trim());
         let obj = {};
         headers.forEach((h, i) => obj[h] = values[i] || "");
         return obj;
     });
+    return data;
 }
 
-/* 自動縮小 sentence 字體 */
-function fitText(sentenceEl, maxWidth) {
+/* sentence 自動縮放 */
+function fitText(sentenceEl, wrapperEl) {
     let fontSize = 30;
     sentenceEl.style.fontSize = fontSize + "px";
-
-    const meanEl = sentenceEl.nextElementSibling;
+    const meanEl = wrapperEl.nextElementSibling;
     if (meanEl) meanEl.style.fontSize = (fontSize * 0.6) + "px";
 
-    while (sentenceEl.scrollWidth > maxWidth && fontSize > 16) {
+    while (sentenceEl.scrollWidth > wrapperEl.offsetWidth && fontSize > 16) {
         fontSize--;
         sentenceEl.style.fontSize = fontSize + "px";
         if (meanEl) meanEl.style.fontSize = (fontSize * 0.6) + "px";
     }
 }
 
-/* 讀取 CSV */
+/* 讀取 CSV 避免快取 */
 async function loadCSV() {
     try {
         const res = await fetch(SHEET_URL + "&t=" + new Date().getTime());
@@ -181,7 +199,7 @@ async function loadCSV() {
     }
 }
 
-/* 填入 lesson 篩選 */
+/* 填入 lesson 選項 */
 function populateFilter() {
     const lessons = [...new Set(allData.map(i => i.lesson))];
     const filter = document.getElementById("lessonFilter");
@@ -203,7 +221,7 @@ function renderCards(lesson) {
         ? allData
         : allData.filter(i => i.lesson === lesson);
 
-    filtered.sort((a,b) => Number(a.lesson) - Number(b.lesson) || Number(a.number) - Number(b.number));
+    filtered.sort((a, b) => Number(a.lesson) - Number(b.lesson) || Number(a.number) - Number(b.number));
 
     filtered.forEach(item => {
         const card = document.createElement("div");
@@ -214,14 +232,17 @@ function renderCards(lesson) {
                 <span>${item.lesson} - ${item.number}</span>
                 <span class="icon" onclick="playSound('${item.audioUrl}')">🔊</span>
             </div>
-            <div class="sentence">${item.sentence}</div>
+            <div class="sentence-wrapper">
+                <span class="sentence">${item.sentence}</span>
+            </div>
             <div class="mean">${item.mean}</div>
         `;
 
         container.appendChild(card);
 
         const sentenceEl = card.querySelector(".sentence");
-        fitText(sentenceEl, card.clientWidth - 20); // 保留左右padding
+        const wrapperEl = card.querySelector(".sentence-wrapper");
+        fitText(sentenceEl, wrapperEl);
     });
 }
 
@@ -243,7 +264,7 @@ document.getElementById("fontKanit").onclick = () => {
     document.getElementById("fontSarabun").classList.remove("active");
 };
 
-/* 篩選 */
+/* 篩選器 */
 document.getElementById("lessonFilter").addEventListener("change", (e) => {
     renderCards(e.target.value);
 });
