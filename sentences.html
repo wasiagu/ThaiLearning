@@ -8,126 +8,126 @@
 <link href="https://fonts.googleapis.com/css2?family=Sarabun&family=Kanit&display=swap" rel="stylesheet">
 
 <style>
-    html, body {
-        margin: 0;
-        padding: 0;
-        font-family: 'Sarabun', sans-serif;
-        background: #fafafa;
-        padding: 20px;
-        -webkit-text-size-adjust: 100%; /* 禁止 Safari 自動縮放字體 */
-    }
+html, body {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Sarabun', sans-serif;
+    background: #fafafa;
+    padding: 20px;
+    -webkit-text-size-adjust: 100%; /* 禁止手機自動縮放字體 */
+    overflow-x: hidden; /* 防止水平滾動 */
+}
 
-    h1 {
-        margin-bottom: 15px;
-        font-size: 26px;
-        font-weight: 600;
-        text-align: center;
-    }
+*, *::before, *::after {
+    box-sizing: inherit;
+}
 
-    /* 上方工具列 */
-    .top-bar {
-        display: flex;
-        gap: 10px;
-        align-items: center;
-        margin-bottom: 20px;
-        flex-wrap: wrap;
-        justify-content: center;
-    }
+h1 {
+    margin-bottom: 15px;
+    font-size: 26px;
+    font-weight: 600;
+    text-align: center;
+}
 
-    select {
-        padding: 8px 12px;
-        border-radius: 8px;
-        border: 1px solid #ccc;
-        font-size: 16px;
-        min-width: 120px;
-    }
+/* 工具列 */
+.top-bar {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+    justify-content: center;
+}
 
-    .font-btn {
-        padding: 8px 14px;
-        border-radius: 8px;
-        border: none;
-        cursor: pointer;
-        background: #ddd;
-        font-size: 15px;
-        min-width: 80px;
-        text-align: center;
-    }
+select {
+    padding: 8px 12px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    font-size: 16px;
+    min-width: 120px;
+}
 
-    .font-btn.active {
-        background: #4a90e2;
-        color: white;
-    }
+.font-btn {
+    padding: 8px 14px;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+    background: #ddd;
+    font-size: 15px;
+    min-width: 80px;
+    text-align: center;
+}
 
-    /* 字卡容器 */
+.font-btn.active {
+    background: #4a90e2;
+    color: white;
+}
+
+/* 字卡容器 */
+.grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 18px;
+    max-width: 100%;
+    justify-items: center;
+}
+
+/* 桌機版一排兩個 */
+@media (min-width: 768px) {
     .grid {
-        display: grid;
-        grid-template-columns: 1fr;
-        gap: 18px;
-        max-width: 100%;
-        justify-items: center; /* 置中卡片 */
+        grid-template-columns: repeat(2, 1fr);
     }
+}
 
-    @media (min-width: 768px) {
-        .grid {
-            grid-template-columns: repeat(2, 1fr);
-        }
+/* 字卡 */
+.card {
+    background: white;
+    border-radius: 12px;
+    padding: 15px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    width: 95vw;
+    max-width: 500px;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    margin: 0 auto; /* 置中 */
+}
+
+/* 手機版工具列調整 */
+@media (max-width: 767px) {
+    select {
+        width: 90%;
     }
-
-    /* 字卡 */
-    .card {
-        background: white;
-        border-radius: 12px;
-        padding: 15px;
-        box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-        width: 95%;
-        max-width: 500px;
-        display: flex;
-        flex-direction: column;
-        gap: 5px;
-        box-sizing: border-box;
-        margin-left: auto;
-        margin-right: auto;
+    .font-btn {
+        width: 42%;
     }
+}
 
-    @media (max-width: 767px) {
-        .card {
-            width: 95%;
-            max-width: 95%;
-        }
+.header-row {
+    font-size: 14px;
+    color: #666;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    white-space: nowrap;
+}
 
-        select {
-            width: 90%;
-        }
+.sentence {
+    font-size: 30px;
+    white-space: nowrap;
+    overflow: visible;
+}
 
-        .font-btn {
-            width: 42%;
-        }
-    }
+.mean {
+    font-size: 20px;
+    color: #444;
+}
 
-    .header-row {
-        font-size: 14px;
-        color: #666;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        white-space: nowrap;
-    }
-
-    .sentence {
-        font-size: 30px;
-        white-space: nowrap;
-        overflow: visible;
-    }
-
-    .mean {
-        font-size: 20px;
-        color: #444;
-    }
-
-    .icon {
-        cursor: pointer;
-        font-size: 20px;
-    }
+.icon {
+    cursor: pointer;
+    font-size: 20px;
+}
 </style>
 </head>
 <body>
@@ -166,20 +166,22 @@ function parseCSV(text) {
 
 /* sentence 自動縮小字體 */
 function fitText(sentenceEl) {
-    const cardWidth = sentenceEl.parentElement.clientWidth;
-    const maxWidth = cardWidth - 20; // 預留 padding
+    requestAnimationFrame(() => {
+        const cardWidth = sentenceEl.parentElement.getBoundingClientRect().width;
+        const maxWidth = cardWidth - 20; // 留邊
 
-    let fontSize = 30;
-    sentenceEl.style.fontSize = fontSize + "px";
-
-    const meanEl = sentenceEl.nextElementSibling;
-    if (meanEl) meanEl.style.fontSize = (fontSize - 10) + "px";
-
-    while (sentenceEl.scrollWidth > maxWidth && fontSize > 18) {
-        fontSize--;
+        let fontSize = 30;
         sentenceEl.style.fontSize = fontSize + "px";
+
+        const meanEl = sentenceEl.nextElementSibling;
         if (meanEl) meanEl.style.fontSize = (fontSize - 10) + "px";
-    }
+
+        while (sentenceEl.scrollWidth > maxWidth && fontSize > 18) {
+            fontSize--;
+            sentenceEl.style.fontSize = fontSize + "px";
+            if (meanEl) meanEl.style.fontSize = (fontSize - 10) + "px";
+        }
+    });
 }
 
 /* 讀取 CSV 避免快取 */
@@ -208,7 +210,7 @@ function populateFilter() {
     });
 }
 
-/* 產生卡片 */
+/* 產生字卡 */
 function renderCards(lesson) {
     const container = document.getElementById("cardContainer");
     container.innerHTML = "";
