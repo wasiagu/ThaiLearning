@@ -19,6 +19,7 @@
         margin-bottom: 15px;
         font-size: 26px;
         font-weight: 600;
+        text-align: center;
     }
 
     /* 上方工具列 */
@@ -36,8 +37,7 @@
         border-radius: 8px;
         border: 1px solid #ccc;
         font-size: 16px;
-        flex: 2;
-        min-width: 100px;
+        min-width: 120px;
     }
 
     .font-btn {
@@ -47,7 +47,6 @@
         cursor: pointer;
         background: #ddd;
         font-size: 15px;
-        flex: 1;
         min-width: 80px;
         text-align: center;
     }
@@ -73,7 +72,7 @@
         }
     }
 
-    /* 字卡 */
+    /* 字卡樣式 */
     .card {
         background: white;
         border-radius: 12px;
@@ -87,11 +86,11 @@
         box-sizing: border-box;
     }
 
-    /* 手機：字卡縮小、置中、左右留白 */
+    /* 手機版字卡：90% 寬度置中 */
     @media (max-width: 767px) {
         .card {
-            width: 85%;
-            max-width: 85%;
+            width: 90%;
+            max-width: 90%;
             margin: 0 auto;
         }
 
@@ -101,11 +100,9 @@
 
         .font-btn {
             width: 42%;
-            flex: 0 0 auto;
         }
     }
 
-    /* 卡片內的排版 */
     .header-row {
         font-size: 14px;
         color: #666;
@@ -168,7 +165,7 @@ function parseCSV(text) {
     return data;
 }
 
-/* sentence 自動縮小字體 */
+/* sentence 自動縮小字體，mean 永遠小 10px */
 function fitText(sentenceEl, maxWidth) {
     let fontSize = 30;
     sentenceEl.style.fontSize = fontSize + "px";
@@ -176,7 +173,7 @@ function fitText(sentenceEl, maxWidth) {
     const meanEl = sentenceEl.nextElementSibling;
     if (meanEl) meanEl.style.fontSize = (fontSize - 10) + "px";
 
-    while (sentenceEl.scrollWidth > maxWidth && fontSize > 20) {
+    while (sentenceEl.scrollWidth > maxWidth && fontSize > 18) {
         fontSize--;
         sentenceEl.style.fontSize = fontSize + "px";
         if (meanEl) meanEl.style.fontSize = (fontSize - 10) + "px";
@@ -196,7 +193,7 @@ async function loadCSV() {
     }
 }
 
-/* 篩選器選項 */
+/* 篩選器 */
 function populateFilter() {
     const lessons = [...new Set(allData.map(i => i.lesson))];
     const filter = document.getElementById("lessonFilter");
@@ -257,7 +254,7 @@ document.getElementById("fontKanit").onclick = () => {
     document.getElementById("fontSarabun").classList.remove("active");
 };
 
-/* 篩選 */
+/* 篩選事件 */
 document.getElementById("lessonFilter").addEventListener("change", (e) => {
     renderCards(e.target.value);
 });
