@@ -25,11 +25,11 @@ h1 {
 /* 上方工具列 */
 .top-bar {
     display: flex;
-    gap: 10px;
-    align-items: center;
-    margin-bottom: 20px;
     flex-wrap: wrap;
+    gap: 10px;
     justify-content: center;
+    margin-bottom: 20px;
+    align-items: center;
 }
 
 select {
@@ -37,8 +37,16 @@ select {
     border-radius: 8px;
     border: 1px solid #ccc;
     font-size: 16px;
-    flex: 2;
-    min-width: 100px;
+    flex: 0 0 auto; /* 自動寬度符合文字 */
+    white-space: nowrap;
+}
+
+.font-buttons {
+    display: flex;
+    gap: 10px;
+    width: 100%;
+    justify-content: center;
+    margin-top: 5px; /* 換行距離 */
 }
 
 .font-btn {
@@ -48,8 +56,6 @@ select {
     cursor: pointer;
     background: #ddd;
     font-size: 15px;
-    flex: 1;
-    min-width: 80px;
     text-align: center;
 }
 
@@ -86,6 +92,9 @@ select {
     flex-direction: column;
     gap: 5px;
     box-sizing: border-box;
+
+    /* sentence 垂直置中 */
+    justify-content: center;
 }
 
 /* 卡片內的排版 */
@@ -103,7 +112,7 @@ select {
     white-space: nowrap;
     overflow: visible;
     text-align: center;
-    font-weight: normal; /* 不加粗 */
+    font-weight: normal;
     line-height: 1.2;
 }
 
@@ -124,11 +133,9 @@ select {
         width: 95%;
         max-width: 95%;
     }
-
     select {
-        width: 90%;
+        width: auto;
     }
-
     .font-btn {
         width: 42%;
         flex: 0 0 auto;
@@ -145,7 +152,9 @@ select {
     <select id="lessonFilter">
         <option value="all">全部課程</option>
     </select>
+</div>
 
+<div class="font-buttons">
     <button class="font-btn active" id="fontSarabun">標準</button>
     <button class="font-btn" id="fontKanit">粗體</button>
 </div>
@@ -171,8 +180,10 @@ function parseCSV(text) {
     });
 }
 
-/* 字體自動縮小 */
-function fitText(sentenceEl, maxWidth) {
+/* sentence 自動縮小 & 垂直置中 */
+function fitText(sentenceEl) {
+    const card = sentenceEl.closest('.card');
+    const maxWidth = card.clientWidth - 10;
     let fontSize = 30;
     sentenceEl.style.fontSize = fontSize + "px";
     sentenceEl.style.lineHeight = "1.2";
@@ -186,9 +197,10 @@ function fitText(sentenceEl, maxWidth) {
         if (meanEl) meanEl.style.fontSize = (fontSize * 0.6) + "px";
     }
 
-    // 調整卡片高度避免上下被切
-    const card = sentenceEl.closest('.card');
-    if (card) card.style.height = 'auto';
+    // 垂直置中
+    card.style.display = "flex";
+    card.style.flexDirection = "column";
+    card.style.justifyContent = "center";
 }
 
 /* 讀取 CSV */
@@ -198,7 +210,7 @@ async function loadCSV() {
         const text = await res.text();
         allData = parseCSV(text);
 
-        // 依 lesson > number 排序
+        // 依 lesson -> number 排序
         allData.sort((a,b) => {
             if(a.lesson === b.lesson) return Number(a.number) - Number(b.number);
             return a.lesson.localeCompare(b.lesson);
@@ -247,7 +259,7 @@ function renderCards(lesson) {
         container.appendChild(card);
 
         const sentenceEl = card.querySelector(".sentence");
-        fitText(sentenceEl, card.clientWidth - 10);
+        fitText(sentenceEl);
     });
 }
 
